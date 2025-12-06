@@ -183,8 +183,10 @@ class Downloader:
 
             output_dir = os.path.join(os.getcwd(), self.dl_folder)
 
+            self.path = os.path.join(output_dir, self.file_name)
+
             if message:
-                media_mssg = "`Downloading from Gofile.io…`\n"
+                media_mssg = f"**Downloading:** `{self.file_name}`\n**via:** Gofile.io\n"
             else:
                 media_mssg = ""
 
