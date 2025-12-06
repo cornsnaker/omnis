@@ -109,6 +109,16 @@ async def get_leech_name(url):
     dinfo = Qbit_c()
     try:
         url = replace_proxy(url)
+        if "gofile.io" in url:
+            from bot.utils.gofile_utils import get_gofile_name
+
+            filename = await get_gofile_name(url)
+            if filename:
+                dinfo.name = filename
+                return dinfo
+            else:
+                dinfo.error = "E404: Gofile file not found or inaccessible."
+                return dinfo
         downloads = await sync_to_async(aria2.add, url, {"dir": f"{os.getcwd()}/temp"})
         c_time = time.time()
         while True:

@@ -123,6 +123,8 @@ class Downloader:
             if self.qbit:
                 return await self.start3(dl, file, message, e, select)
             elif self.uri:
+                if "gofile.io" in self.uri:
+                    return await self.start_gofile(dl, file, message, e)
                 return await self.start2(dl, file, message, e)
             await self.log_download()
             if self.dl_folder:
@@ -169,6 +171,49 @@ class Downloader:
         except Exception:
             self.un_register()
             await logger(Exception)
+            return None
+
+    async def start_gofile(self, dl, file, message, e):
+        try:
+            from bot.utils.gofile_utils import download_from_gofile
+
+            await self.log_download()
+            self.time = ttt = time.time()
+            await asyncio.sleep(3)
+
+            output_dir = os.path.join(os.getcwd(), self.dl_folder)
+
+            if message:
+                media_mssg = "`Downloading from Gofile.io…`\n"
+            else:
+                media_mssg = ""
+
+            # Pass progress callback
+            success = await download_from_gofile(
+                self.uri,
+                output_dir,
+                progress_callback=self.progress_for_pyrogram if message else None,
+                progress_args=(pyro, media_mssg, e, ttt) if message else None
+            )
+
+            if success:
+                pass
+            else:
+                 raise Exception("Gofile download failed.")
+
+            await self.wait()
+            self.un_register()
+
+            class MockDownload:
+                is_complete = True
+                name = self.file_name
+            return MockDownload()
+
+        except Exception as ex:
+            self.un_register()
+            await logger(ex)
+            if message:
+                await message.edit(f"Download Error: {ex}")
             return None
 
     async def start2(self, dl, file, message, e):

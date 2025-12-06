@@ -22,6 +22,21 @@ class Uploader:
 
     async def start(self, from_user_id, filepath, reply, thum, caption, message):
         try:
+            if os.path.getsize(filepath) > 2 * 1024 * 1024 * 1024:
+                from bot.utils.gofile_utils import upload_to_gofile
+
+                await reply.edit("File is larger than 2GB, uploading to Gofile.io…")
+                link = await upload_to_gofile(filepath)
+                if link:
+                    await reply.edit(
+                        f"**File is larger than 2GB. Uploaded to Gofile.io:**\n{link}"
+                    )
+                    decode(self.id, pop=True)
+                    return reply
+                else:
+                    await reply.edit("Failed to upload to Gofile.io.")
+                    decode(self.id, pop=True)
+                    return None
             if not thum or not (thum and file_exists(thum)):
                 if not file_exists(thumb):
                     thum = None
