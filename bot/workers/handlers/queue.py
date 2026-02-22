@@ -269,9 +269,7 @@ async def enleech(event, args: str, client, direct=False):
                             await asyncio.sleep(10)
                             continue
                         if not is_video_file(file.name):
-                            await event2.reply(no_dl_spt_msg, quote=True)
-                            await asyncio.sleep(5)
-                            continue
+                            pass
                         already_in_queue = False
                         for item in queue.values():
                             if file.name in item:
@@ -326,7 +324,7 @@ async def enleech(event, args: str, client, direct=False):
         if file.error:
             return await event.reply(f"`{file.error}`")
         if not is_video_file(file.name):
-            return await event.reply(no_dl_spt_msg)
+            pass
         for item in queue.values():
             if file.name in item:
                 return await event.reply(
@@ -494,13 +492,9 @@ async def enleech2(event, args: str, client, direct=False):
                             mode = f"Select. {flag.s}"
                             file.name = flag.d or (file.file_list[ind].split("/"))[-1]
                         if file.count > 1:
-                            await event2.reply(no_bt_spt_msg, quote=True)
-                            await asyncio.sleep(3)
-                            continue
+                            pass
                         if not is_video_file(file.name):
-                            await event2.reply(no_fl_spt_msg, quote=True)
-                            await asyncio.sleep(5)
-                            continue
+                            pass
                         already_in_queue = False
                         for item in queue.values():
                             if file.name in item:
@@ -586,9 +580,9 @@ async def enleech2(event, args: str, client, direct=False):
             mode = f"Select. {flag.s}"
             file.name = flag.d or (file.file_list[ind].split("/"))[-1]
         elif file.count > 1:
-            return await event.reply(no_bt_spt_msg)
+            pass
         elif not is_video_file(file.name):
-            return await event.reply(no_fl_spt_msg)
+            pass
         for item in queue.values():
             if file.name in item:
                 return await event.reply(
