@@ -1,36 +1,19 @@
-# Base Image
-FROM fedora:40
-#FROM colserra/fedora37_wf
-# 2nd docker image allows skipping step 2-3 & 5-6
+# Use the Fedora-based image you just pushed
+FROM yashwild/omnis:v1
 
-# 1. Setup home directory, non interactive shell and timezone
-RUN mkdir -p /bot /tgenc && chmod 777 /bot
-WORKDIR /bot
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Africa/Lagos
-ENV TERM=xterm
+# Set working directory
+WORKDIR /usr/src/app
+RUN chmod 777 /usr/src/app
 
-# 2. Install Dependencies (always install gcc + python3-devel so tgcrypto can compile)
-RUN dnf -qq -y update && \
-    dnf -qq -y install git aria2 bash xz wget curl pv jq python3-pip mediainfo \
-                       psmisc procps-ng qbittorrent-nox gcc python3-devel && \
-    python3 -m pip install --upgrade pip setuptools wheel
+# Create virtual environment using uv (WZML style)
+RUN /uv/bin/uv venv --system-site-packages
 
-# 3. Install latest ffmpeg
-RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/64/) && \
-    wget -q https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n7.1-latest-linux${arch}-gpl-7.1.tar.xz && \
-    tar -xvf *xz && \
-    cp *7.1/bin/* /usr/bin && \
-    rm -rf *xz && rm -rf *7.1
+# Install requirements
+COPY requirements.txt .
+RUN /uv/bin/uv pip install --no-cache-dir -r requirements.txt
 
-# 4. Copy files from repo to home directory
+# Copy your bot code
 COPY . .
 
-# 5. Install python3 requirements
-RUN pip3 install -r requirements.txt
-
-# 6. cleanup for arm64
-RUN if [[ $(arch) == 'aarch64' ]]; then dnf -qq -y history undo last; fi && dnf clean all
-
-# 7. Start bot
-CMD ["bash","run.sh"]
+# Start the bot
+CMD ["bash", "run.sh"]
