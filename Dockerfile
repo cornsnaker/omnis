@@ -1,19 +1,14 @@
 # Use the Fedora-based image you just pushed
 FROM yashwild/omnis:v1
 
-# Set working directory
-WORKDIR /usr/src/app
-RUN chmod 777 /usr/src/app
-
-# Create virtual environment using uv (WZML style)
-RUN /uv/bin/uv venv --system-site-packages
-
-# Install requirements
-COPY requirements.txt .
-RUN /uv/bin/uv pip install --no-cache-dir -r requirements.txt
-
-# Copy your bot code
+# 4. Copy files from repo to home directory
 COPY . .
 
-# Start the bot
-CMD ["bash", "run.sh"]
+# 5. Install python3 requirements
+RUN pip3 install -r requirements.txt
+
+# 6. cleanup for arm64
+RUN if [[ $(arch) == 'aarch64' ]]; then dnf -qq -y history undo last; fi && dnf clean all
+
+# 7. Start bot
+CMD ["bash","run.sh"]
