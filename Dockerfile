@@ -1,5 +1,27 @@
-# Use the Fedora-based image you just pushed
-FROM yashwild/omnis:v1
+# Base Image
+FROM fedora:40
+#FROM colserra/fedora37_wf
+# 2nd docker image allows skipping step 2-3 & 5-6
+
+# 1. Setup home directory, non interactive shell and timezone
+RUN mkdir -p /bot /tgenc && chmod 777 /bot
+WORKDIR /bot
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Africa/Lagos
+ENV TERM=xterm
+
+# 2. Install Dependencies (always install gcc + python3-devel so tgcrypto can compile)
+RUN dnf -qq -y update && \
+    dnf -qq -y install git aria2 bash xz wget curl pv jq python3-pip mediainfo \
+                       psmisc procps-ng qbittorrent-nox gcc python3-devel && \
+    python3 -m pip install --upgrade pip setuptools wheel
+
+# 3. Install latest ffmpeg
+RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/64/) && \
+    wget -q https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n7.1-latest-linux${arch}-gpl-7.1.tar.xz && \
+    tar -xvf *xz && \
+    cp *7.1/bin/* /usr/bin && \
+    rm -rf *xz && rm -rf *7.1
 
 # 4. Copy files from repo to home directory
 COPY . .
