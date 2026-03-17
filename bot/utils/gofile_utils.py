@@ -206,6 +206,9 @@ async def download_from_gofile(
 
                 async with session.get(download_link, headers=headers) as r:
                     if r.status not in (200, 206):
+                        await logger(
+                            f"GoFile download failed for {filename}: HTTP {r.status}"
+                        )
                         continue
 
                     downloaded = part_size
