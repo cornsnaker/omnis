@@ -10,24 +10,10 @@ import anitopy
 import requests
 from aiohttp import ClientSession
 
-from bot import (
-    LOGS,
-    asyncio,
-    caption_file,
-    dt,
-    ffmpeg_file,
-    ffmpeg_file2,
-    ffmpeg_file3,
-    ffmpeg_file4,
-    filter_file,
-    itertools,
-    tele,
-    telegraph_errors,
-    tgp_author,
-    tgp_author_url,
-    tgp_client,
-    time,
-)
+from bot import (LOGS, asyncio, caption_file, dt, ffmpeg_file, ffmpeg_file2,
+                 ffmpeg_file3, ffmpeg_file4, filter_file, itertools, tele,
+                 telegraph_errors, tgp_author, tgp_author_url, tgp_client,
+                 time)
 from bot.config import _bot, conf
 
 OK = {}
@@ -87,6 +73,7 @@ def get_var(var):
     var_dict = dict()
     var_dict.update(
         {
+            "dump_leech": _bot.dump_leech,
             "groupenc": _bot.groupenc,
             "version2": _bot.version2,
             "paused": _bot.paused,

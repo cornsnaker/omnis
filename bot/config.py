@@ -137,6 +137,7 @@ class Runtime_Config:
         self.started = False
         self.temp_only_in_group = False
         self.temp_users = []
+        self.dump_leech = [1] if conf.DUMP_LEECH else []
         self.u_cancel = []
         self.version2 = []
 

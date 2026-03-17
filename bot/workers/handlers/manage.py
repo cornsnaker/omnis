@@ -3,56 +3,23 @@ import itertools
 
 from feedparser import parse as feedparse
 
-from bot import (
-    caption_file,
-    ffmpeg_file,
-    ffmpeg_file2,
-    ffmpeg_file3,
-    ffmpeg_file4,
-    filter_file,
-    mux_file,
-    parse_file,
-    rename_file,
-    rss_dict_lock,
-    thumb,
-)
+from bot import (caption_file, ffmpeg_file, ffmpeg_file2, ffmpeg_file3,
+                 ffmpeg_file4, filter_file, mux_file, parse_file, rename_file,
+                 rss_dict_lock, thumb)
 from bot.config import _bot, conf
 from bot.startup.before import entime
 from bot.utils.bot_utils import encode_job as ejob
-from bot.utils.bot_utils import (
-    get_aria2,
-    get_bqueue,
-    get_html,
-    get_pause_status,
-    get_queue,
-    get_var,
-    list_to_str,
-    split_text,
-    string_escape,
-    sync_to_async,
-    time_formatter,
-)
+from bot.utils.bot_utils import (get_aria2, get_bqueue, get_html,
+                                 get_pause_status, get_queue, get_var,
+                                 list_to_str, split_text, string_escape,
+                                 sync_to_async, time_formatter)
 from bot.utils.db_utils import save2db, save2db2
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import (
-    avoid_flood,
-    bc_msg,
-    enquoter,
-    event_handler,
-    get_args,
-    msg_sleep_delete,
-    try_delete,
-    user_is_owner,
-)
-from bot.utils.os_utils import (
-    file_exists,
-    kill_process,
-    qclean,
-    re_x,
-    s_remove,
-    updater,
-    x_or_66,
-)
+from bot.utils.msg_utils import (avoid_flood, bc_msg, enquoter, event_handler,
+                                 get_args, msg_sleep_delete, try_delete,
+                                 user_is_owner)
+from bot.utils.os_utils import (file_exists, kill_process, qclean, re_x,
+                                s_remove, updater, x_or_66)
 from bot.utils.rss_utils import schedule_rss, scheduler
 from bot.workers.downloaders.dl_helpers import get_qbclient
 
@@ -223,6 +190,37 @@ async def allowgroupenc(event, args, client):
         yo = await event.reply(
             "**Group Encoding Turned on Successfully**\n__Persists till bot restarts!__"
         )
+
+
+async def dump_leech(event, args, client):
+    """
+    Toggle leech dump on or off.
+    Usage:
+        - No args (check status)
+        - off/disable (disable leech dump)
+        - on/enable (enable leech dump)
+        <All arguments are not case sensitive.>
+    """
+    if not user_is_owner(event.sender_id):
+        return await try_delete(event)
+    dl = get_var("dump_leech")
+
+    if not args:
+        if dl:
+            return await event.reply("`Leech dump is enabled.`")
+        else:
+            return await event.reply("`Leech dump is disabled.`")
+
+    if args.casefold() in ("off", "disable"):
+        if not dl:
+            return await event.reply("**Already turned off**")
+        dl.clear()
+        await event.reply("**Leech dump turned off Successfully**")
+    if args.casefold() in ("on", "enable"):
+        if dl:
+            return await event.reply("**Already turned on**")
+        dl.append(1)
+        await event.reply("**Leech dump turned on Successfully**")
 
 
 async def custom_rename(event, args, client):

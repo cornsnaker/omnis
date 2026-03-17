@@ -7,11 +7,8 @@ from bot.config import conf
 from bot.others.exceptions import AlreadyDl
 from bot.startup.before import entime
 from bot.utils.ani_utils import custcap, dynamicthumb, f_post, parse, qparse_t
-from bot.utils.batch_utils import (
-    get_batch_list,
-    get_downloadable_batch,
-    mark_file_as_done,
-)
+from bot.utils.batch_utils import (get_batch_list, get_downloadable_batch,
+                                   mark_file_as_done)
 from bot.utils.bot_utils import enc_canceller as e_cancel
 from bot.utils.bot_utils import encode_info as einfo
 from bot.utils.bot_utils import encode_job as ejob
@@ -19,14 +16,8 @@ from bot.utils.bot_utils import get_bqueue, get_queue, get_var, hbs
 from bot.utils.bot_utils import time_formatter as tf
 from bot.utils.db_utils import save2db
 from bot.utils.log_utils import logger
-from bot.utils.msg_utils import (
-    bc_msg,
-    enpause,
-    get_cached,
-    reply_message,
-    report_encode_status,
-    report_failed_download,
-)
+from bot.utils.msg_utils import (bc_msg, enpause, get_cached, reply_message,
+                                 report_encode_status, report_failed_download)
 from bot.utils.os_utils import file_exists, info, pos_in_stm, s_remove, size_of
 from bot.workers.downloaders.dl_helpers import cache_dl
 from bot.workers.downloaders.download import Downloader as downloader
@@ -309,7 +300,7 @@ async def thing():
                 c_n = c_n.replace(x, "_")
             await op.reply("#" + c_n) if op else None
             await msg_p.reply("#" + c_n) if log_channel == chat_id else None
-        if einfo.uri and conf.DUMP_LEECH is True:
+        if einfo.uri and get_var("dump_leech"):
             asyncio.create_task(dumpdl(dl, name, thumb2, msg_t.chat_id, message))
         if ejob.jobs() > 1:
             await cache_dl(cached=True)
