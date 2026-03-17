@@ -25,66 +25,24 @@ from .workers.handlers.dev import bash
 from .workers.handlers.dev import eval as eval_
 from .workers.handlers.dev import eval_message_p
 from .workers.handlers.e_callbacks import pres, skip, skip_jobs, stats
-from .workers.handlers.manage import (
-    allowgroupenc,
-    auto_rename,
-    change,
-    check,
-    clean,
-    custom_rename,
-    del_auto_rename,
-    discap,
-    fc_forward,
-)
+from .workers.handlers.manage import (allowgroupenc, auto_rename, change,
+                                      check, clean, custom_rename,
+                                      del_auto_rename, discap, dump_leech,
+                                      fc_forward)
 from .workers.handlers.manage import filter as filter_
-from .workers.handlers.manage import (
-    get_mux_args,
-    nuke,
-    pause,
-    reffmpeg,
-    restart,
-    rmfilter,
-    rss_handler,
-    save_thumb,
-    set_mux_args,
-    update2,
-    v_auto_rename,
-    version2,
-    vfilter,
-)
-from .workers.handlers.queue import (
-    addqueue,
-    clearqueue,
-    edit_batch,
-    enleech,
-    enleech2,
-    enselect,
-    listqueue,
-    pencode,
-)
-from .workers.handlers.rebut import (
-    en_airing,
-    en_anime,
-    en_download,
-    en_list,
-    en_mux,
-    en_rename,
-    en_upload,
-    getlogs,
-    getminfo,
-    getthumb,
-)
+from .workers.handlers.manage import (get_mux_args, nuke, pause, reffmpeg,
+                                      restart, rmfilter, rss_handler,
+                                      save_thumb, set_mux_args, update2,
+                                      v_auto_rename, version2, vfilter)
+from .workers.handlers.queue import (addqueue, clearqueue, edit_batch, enleech,
+                                     enleech2, enselect, listqueue, pencode)
+from .workers.handlers.rebut import (en_airing, en_anime, en_download, en_list,
+                                     en_mux, en_rename, en_upload, getlogs,
+                                     getminfo, getthumb)
 from .workers.handlers.stuff import beck
 from .workers.handlers.stuff import help as help_
-from .workers.handlers.stuff import (
-    icommands,
-    ihelp,
-    start,
-    status,
-    temp_auth,
-    temp_unauth,
-    up,
-)
+from .workers.handlers.stuff import (icommands, ihelp, start, status,
+                                     temp_auth, temp_unauth, up)
 
 cmd_suffix = conf.CMD_SUFFIX.strip()
 LOGS.info("Starting...")
@@ -191,6 +149,11 @@ async def _(e):
 @tele.on(events.NewMessage(pattern=command(["groupenc"])))
 async def _(e):
     await event_handler(e, allowgroupenc)
+
+
+@tele.on(events.NewMessage(pattern=command(["dumpleech"])))
+async def _(e):
+    await event_handler(e, dump_leech)
 
 
 @tele.on(events.NewMessage(pattern=command(["parse"])))

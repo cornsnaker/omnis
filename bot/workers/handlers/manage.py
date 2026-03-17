@@ -225,6 +225,37 @@ async def allowgroupenc(event, args, client):
         )
 
 
+async def dump_leech(event, args, client):
+    """
+    Toggle leech dump on or off.
+    Usage:
+        - No args (check status)
+        - off/disable (disable leech dump)
+        - on/enable (enable leech dump)
+        <All arguments are not case sensitive.>
+    """
+    if not user_is_owner(event.sender_id):
+        return await try_delete(event)
+    dl = get_var("dump_leech")
+
+    if not args:
+        if dl:
+            return await event.reply("`Leech dump is enabled.`")
+        else:
+            return await event.reply("`Leech dump is disabled.`")
+
+    if args.casefold() in ("off", "disable"):
+        if not dl:
+            return await event.reply("**Already turned off**")
+        dl.clear()
+        await event.reply("**Leech dump turned off Successfully**")
+    elif args.casefold() in ("on", "enable"):
+        if dl:
+            return await event.reply("**Already turned on**")
+        dl.append(1)
+        await event.reply("**Leech dump turned on Successfully**")
+
+
 async def custom_rename(event, args, client):
     """
     Set a custom rename format if args are passed without parameters
