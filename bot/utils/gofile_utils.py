@@ -256,7 +256,13 @@ async def download_from_gofile(
                                     pass
 
                 if os.path.isfile(tmp_file):
-                    if file_size == 0 or os.path.getsize(tmp_file) == file_size:
+                    if file_size > 0 and os.path.getsize(tmp_file) == file_size:
+                        os.replace(tmp_file, filepath)
+                    elif file_size == 0:
+                        await logger(
+                            f"GoFile: no size metadata for {filename}, "
+                            f"accepting {os.path.getsize(tmp_file)} bytes"
+                        )
                         os.replace(tmp_file, filepath)
 
             return True
