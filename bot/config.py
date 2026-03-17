@@ -58,6 +58,7 @@ class Config:
             self.FINISHED_PROGRESS_STR = config("FINISHED_PROGRESS_STR", default="🧡")
             self.FL_CAP = config("FILENAME_AS_CAPTION", default=False, cast=bool)
             self.FS_THRESHOLD = config("FLOOD_SLEEP_THRESHOLD", default=600, cast=int)
+            self.GF_TOKEN = config("GF_TOKEN", default=None)
             self.FSTICKER = config("FSTICKER", default=None)
             self.LOCK_ON_STARTUP = config("LOCK_ON_STARTUP", default=False, cast=bool)
             self.LOG_CHANNEL = config("LOG_CHANNEL", default=0, cast=int)
@@ -137,6 +138,7 @@ class Runtime_Config:
         self.started = False
         self.temp_only_in_group = False
         self.temp_users = []
+        self.dump_leech = [1] if conf.DUMP_LEECH else []
         self.u_cancel = []
         self.version2 = []
 
