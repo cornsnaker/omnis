@@ -32,6 +32,8 @@ Optional Variables | Explanation
 `ALLOW_ACTION` type=bool | Set to True or False depending on whether you want encoding chat actions enabled for bot
 `UPSTREAM_REPO` `UPSTREAM_BRANCH` | Input custom repo link and custom repo branch name, For use with the update function
   . | *Note:* Update will fail if there are new modules or dependencies in bot. Redeploy if that happens 
+`GF_TOKEN` | GoFile.io account API token for downloading gofile links. Get it from your GoFile profile page. Guest mode is used if not set (rate-limited).
+`DUMP_LEECH` type=bool | Dump leeched files to `DUMP_CHANNEL`. Default is True. Can also be toggled at runtime with `/dumpleech` command.
 ---
 
 
@@ -69,6 +71,7 @@ reset - reset default ffmpeg code
 filter - filter & stuff
 vfilter - view filter
 groupenc - allow encoding in group toggle
+dumpleech - toggle leech dump on/off (admin only)
 delfilter - delete filter
 rss - edit, delete & subscribe rss feeds
 anime - get anime info
