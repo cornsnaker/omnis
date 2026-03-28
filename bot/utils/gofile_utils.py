@@ -17,7 +17,7 @@ def _generate_website_token(user_agent, account_token):
     Based on https://github.com/ltsdw/gofile-downloader
     """
     time_slot = int(time()) // 14400
-    raw = f"{user_agent}::en-US::{account_token}::{time_slot}::gf2026x"
+    raw = f"{user_agent}::en-US::{account_token}::{time_slot}::5d4f7g8sd45fsd"
     return sha256(raw.encode()).hexdigest()
 
 
