@@ -17,6 +17,23 @@ from .bot_utils import post_to_tgph, sync_to_async
 from .log_utils import log, logger
 
 
+def has_ansi_support():
+    """
+    Checks whether the current terminal supports ANSI escape codes.
+
+    Based on https://github.com/ltsdw/gofile-downloader
+
+    :return: True if the platform supports ANSI escape codes.
+    """
+    if not sys.stdout.isatty():
+        return False
+
+    if os.name == "nt":
+        return sys.getwindowsversion().major >= 10
+
+    return True
+
+
 async def enshell(cmd):
     # Create a subprocess and wait for it to finish
     process = await asyncio.create_subprocess_shell(
