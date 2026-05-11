@@ -8,7 +8,8 @@ from bot.config import conf
 from bot.utils.log_utils import logger
 
 USER_AGENT = "Mozilla/5.0"
-MAX_RETRIES = 3
+MAX_RETRIES = 5
+TIMEOUT = aiohttp.ClientTimeout(total=300, connect=15)
 
 
 def _generate_website_token(user_agent, account_token):
@@ -37,14 +38,18 @@ async def _setup_account(session):
     Set up GoFile account authentication.
     Uses GF_TOKEN from config if available, otherwise creates a guest account.
     Retries up to MAX_RETRIES times on failure.
+    Returns the account token string, or None on failure.
     """
     # Use user-provided token if available (recommended by GoFile)
     gf_token = getattr(conf, "GF_TOKEN", None)
     if gf_token:
-        session.headers.update({"Authorization": f"Bearer {gf_token}"})
-        session.cookie_jar.update_cookies(
-            {"Cookie": f"accountToken={gf_token}"}, url=aiohttp.client.URL("https://gofile.io")
-        )
+        try:
+            session.cookie_jar.update_cookies(
+                {"accountToken": gf_token},
+                response_url=aiohttp.client.URL("https://gofile.io"),
+            )
+        except Exception:
+            pass
         return gf_token
 
     # Otherwise create a guest account with retries
@@ -59,11 +64,13 @@ async def _setup_account(session):
                     acc_data = await acc_resp.json()
                     if acc_data.get("status") == "ok":
                         token = acc_data["data"]["token"]
-                        session.headers.update({"Authorization": f"Bearer {token}"})
-                        session.cookie_jar.update_cookies(
-                            {"Cookie": f"accountToken={token}"},
-                            url=aiohttp.client.URL("https://gofile.io"),
-                        )
+                        try:
+                            session.cookie_jar.update_cookies(
+                                {"accountToken": token},
+                                response_url=aiohttp.client.URL("https://gofile.io"),
+                            )
+                        except Exception:
+                            pass
                         return token
                     else:
                         await logger(f"GoFile account creation returned: {acc_data}")
@@ -85,6 +92,8 @@ async def _fetch_content(session, content_id, account_token, password=None):
 
     wt = _generate_website_token(USER_AGENT, account_token or "")
     headers = {"X-Website-Token": wt, "X-BL": "en-US"}
+    if account_token:
+        headers["Authorization"] = f"Bearer {account_token}"
 
     async with session.get(url, headers=headers) as resp:
         if resp.status != 200:
@@ -140,7 +149,7 @@ async def _collect_files(session, content_id, account_token, parent_dir, passwor
 
 
 async def get_gofile_server():
-    async with aiohttp.ClientSession(headers=_get_session_headers()) as session:
+    async with aiohttp.ClientSession(headers=_get_session_headers(), timeout=TIMEOUT) as session:
         try:
             async with session.get("https://api.gofile.io/servers") as resp:
                 if resp.status == 200:
@@ -158,7 +167,7 @@ async def upload_to_gofile(filepath):
     server = await get_gofile_server()
     url = f"https://{server}.gofile.io/contents/uploadfile"
 
-    async with aiohttp.ClientSession(headers=_get_session_headers()) as session:
+    async with aiohttp.ClientSession(headers=_get_session_headers(), timeout=TIMEOUT) as session:
         data = aiohttp.FormData()
         try:
             with open(filepath, "rb") as f:
@@ -178,7 +187,7 @@ async def get_gofile_name(url):
     try:
         content_id = url.split("/")[-1]
 
-        async with aiohttp.ClientSession(headers=_get_session_headers()) as session:
+        async with aiohttp.ClientSession(headers=_get_session_headers(), timeout=TIMEOUT) as session:
             token = await _setup_account(session)
             if not token:
                 await logger("GoFile: failed to set up account, trying without auth")
@@ -206,7 +215,7 @@ async def download_from_gofile(
     try:
         content_id = url.split("/")[-1]
 
-        async with aiohttp.ClientSession(headers=_get_session_headers()) as session:
+        async with aiohttp.ClientSession(headers=_get_session_headers(), timeout=TIMEOUT) as session:
             token = await _setup_account(session)
             if not token:
                 await logger("GoFile: failed to set up account, trying without auth")
@@ -234,8 +243,12 @@ async def download_from_gofile(
                         part_size = os.path.getsize(tmp_file)
                         headers = {"Range": f"bytes={part_size}-"}
 
+                    dl_headers = dict(headers)
+                    if token:
+                        dl_headers["Authorization"] = f"Bearer {token}"
+
                     try:
-                        async with session.get(download_link, headers=headers) as r:
+                        async with session.get(download_link, headers=dl_headers) as r:
                             status = r.status
                             if status in (403, 404, 405, 500):
                                 await logger(
