@@ -17,7 +17,7 @@ def _generate_website_token(user_agent, account_token):
     Based on https://github.com/ltsdw/gofile-downloader
     """
     time_slot = int(time()) // 14400
-    raw = f"{user_agent}::en-US::{account_token}::{time_slot}::gf2026x"
+    raw = f"{user_agent}::en-US::{account_token}::{time_slot}::5d4f7g8sd45fsd"
     return sha256(raw.encode()).hexdigest()
 
 
@@ -43,7 +43,7 @@ async def _setup_account(session):
     if gf_token:
         session.headers.update({"Authorization": f"Bearer {gf_token}"})
         session.cookie_jar.update_cookies(
-            {"accountToken": gf_token}, url=aiohttp.client.URL("https://gofile.io")
+            {"Cookie": f"accountToken={gf_token}"}, url=aiohttp.client.URL("https://gofile.io")
         )
         return gf_token
 
@@ -61,7 +61,7 @@ async def _setup_account(session):
                         token = acc_data["data"]["token"]
                         session.headers.update({"Authorization": f"Bearer {token}"})
                         session.cookie_jar.update_cookies(
-                            {"accountToken": token},
+                            {"Cookie": f"accountToken={token}"},
                             url=aiohttp.client.URL("https://gofile.io"),
                         )
                         return token
@@ -222,48 +222,76 @@ async def download_from_gofile(
                 download_link = file_info["link"]
                 filename = os.path.basename(file_info["filename"])
                 filepath = os.path.join(file_info["path"], filename)
-                file_size = file_info.get("size", 0)
-
                 if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
-                    if os.path.getsize(filepath) == file_size:
-                        continue
+                    continue
 
                 tmp_file = f"{filepath}.part"
-                headers = {}
-                part_size = 0
-                if os.path.isfile(tmp_file):
-                    part_size = os.path.getsize(tmp_file)
-                    headers = {"Range": f"bytes={part_size}-"}
 
-                async with session.get(download_link, headers=headers) as r:
-                    if r.status not in (200, 206):
+                for _retry in range(MAX_RETRIES):
+                    part_size = 0
+                    headers = {}
+                    if os.path.isfile(tmp_file):
+                        part_size = os.path.getsize(tmp_file)
+                        headers = {"Range": f"bytes={part_size}-"}
+
+                    try:
+                        async with session.get(download_link, headers=headers) as r:
+                            status = r.status
+                            if status in (403, 404, 405, 500):
+                                await logger(
+                                    f"GoFile download failed for {filename}: HTTP {status}"
+                                )
+                                break
+                            if part_size == 0 and status not in (200, 206):
+                                await logger(
+                                    f"GoFile download failed for {filename}: HTTP {status}"
+                                )
+                                break
+                            if part_size > 0 and status != 206:
+                                await logger(
+                                    f"GoFile resume failed for {filename}: HTTP {status}"
+                                )
+                                break
+
+                            # Determine total file size from headers
+                            content_length = r.headers.get("Content-Length")
+                            content_range = r.headers.get("Content-Range")
+                            if part_size == 0:
+                                total_size = int(content_length) if content_length else 0
+                            elif content_range:
+                                total_size = int(content_range.split("/")[-1])
+                            else:
+                                total_size = 0
+
+                            downloaded = part_size
+                            with open(tmp_file, "ab") as f:
+                                async for chunk in r.content.iter_chunked(8192):
+                                    f.write(chunk)
+                                    downloaded += len(chunk)
+                                    if progress_callback and total_size > 0 and progress_args:
+                                        try:
+                                            await progress_callback(
+                                                downloaded, total_size, *progress_args
+                                            )
+                                        except Exception:
+                                            pass
+
+                            # Finalize: verify size and move
+                            if os.path.isfile(tmp_file) and total_size > 0:
+                                if os.path.getsize(tmp_file) == total_size:
+                                    os.replace(tmp_file, filepath)
+                            elif os.path.isfile(tmp_file) and total_size == 0:
+                                await logger(
+                                    f"GoFile: no size header for {filename}, "
+                                    f"accepting {os.path.getsize(tmp_file)} bytes"
+                                )
+                                os.replace(tmp_file, filepath)
+                            break
+                    except Exception as dl_err:
                         await logger(
-                            f"GoFile download failed for {filename}: HTTP {r.status}"
+                            f"GoFile download attempt {_retry + 1} failed for {filename}: {dl_err}"
                         )
                         continue
-
-                    downloaded = part_size
-                    with open(tmp_file, "ab") as f:
-                        async for chunk in r.content.iter_chunked(8192):
-                            f.write(chunk)
-                            downloaded += len(chunk)
-                            if progress_callback and file_size > 0 and progress_args:
-                                try:
-                                    await progress_callback(
-                                        downloaded, file_size, *progress_args
-                                    )
-                                except Exception:
-                                    pass
-
-                if os.path.isfile(tmp_file):
-                    if file_size > 0 and os.path.getsize(tmp_file) == file_size:
-                        os.replace(tmp_file, filepath)
-                    elif file_size == 0:
-                        await logger(
-                            f"GoFile: no size metadata for {filename}, "
-                            f"accepting {os.path.getsize(tmp_file)} bytes"
-                        )
-                        os.replace(tmp_file, filepath)
 
             return True
 
