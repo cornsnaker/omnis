@@ -73,9 +73,9 @@ async def encodestat():
             msg += f"Nothing Here; While you wait:\n\n{loc}"
         elif not single and (r := (len(_bot.queue) - 1)):
             msg += f"\n__(+{r} more item(s) on queue.)__ \n"
-    except Exception as e:
+    except Exception:
         # pass
-        await logger(e)
+        await logger(Exception)
     me = await tele.get_me()
     codec = await get_codec(encode_job.pending())
     msg += f"\n\nYours truly,\n  {enmoji()} `{me.first_name}`"

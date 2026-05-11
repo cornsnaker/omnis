@@ -79,8 +79,8 @@ async def try_delete(msg):
         await msg.reply(f"`{enquip3()}`")
     except pyro_errors.exceptions.forbidden_403.MessageDeleteForbidden:
         await msg.reply(f"`{enquip3()}`", quote=True)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def get_cached(dl: str, sender, user: int, e, op):
@@ -117,8 +117,8 @@ async def get_cached(dl: str, sender, user: int, e, op):
         if not dl_check.is_file():
             raise Exception("Getting cached file failed\nfile might have been deleted.")
         return True
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
         await e.edit("`Using cached download failed\nRe-downloading…`")
         if op:
             await op.edit("`Using cached download failed\nRe-downloading…`")
@@ -154,8 +154,8 @@ async def enpause(message):
         except pyro_errors.BadRequest:
             await asyncio.sleep(10)
             continue
-        except Exception as e:
-            await logger(e)
+        except Exception:
+            await logger(Exception)
 
 
 def get_expanded_chats(chats):
@@ -181,8 +181,8 @@ async def send_rss(msg: str, chat_ids: list = None):
             )
             event = await avoid_flood(tele.send_message, chat, msg, reply_to=top_id)
         return event
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def avoid_flood(func, *args, **kwargs):
@@ -229,8 +229,8 @@ async def edit_message(message, text: str):
         )
         await asyncio.sleep(e.seconds)
         return await edit_message(message, text)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
     return edited
 
@@ -473,8 +473,8 @@ async def enquoter(msg, rply):
         quotes = await sync_to_async(enquotes)
         await rply.edit(f"**{msg}**\n\n~while you wait~\n\n{quotes}")
         await asyncio.sleep(1.5)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def event_handler(

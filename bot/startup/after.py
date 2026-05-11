@@ -71,8 +71,8 @@ async def onrestart():
             return
         chat_id, msg_id = map(int, sys.argv[2].split(":"))
         await pyro.edit_message_text(chat_id, msg_id, msg)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def onstart():
@@ -94,8 +94,8 @@ async def onstart():
                 f"**Aria2:** `{'Online' if _bot.sas else 'Offline/Not_ready'}`"
                 f"\n**Qbit:** `{'Online' if _bot.sqs else 'Offline/Not_ready'}`",
             )
-        except Exception as e:
-            await logger(e)
+        except Exception:
+            await logger(Exception)
     except BaseException:
         pass
 

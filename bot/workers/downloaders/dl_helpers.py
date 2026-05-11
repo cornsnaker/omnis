@@ -100,8 +100,8 @@ async def download2(dl, file, message=None, e=None):
             )
         )
         return download_task
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def get_leech_name(url):
@@ -155,7 +155,7 @@ async def get_leech_name(url):
         await sync_to_async(clean_aria_dl, download)
     except Exception as e:
         dinfo.error = e
-        await logger(e)
+        await logger(Exception)
     finally:
         return dinfo
 
@@ -211,7 +211,7 @@ async def base_get_torrent(url):
         return
     except Exception as e:
         qinfo.error = e
-        await logger(e)
+        await logger(Exception)
     finally:
         return qinfo
 
@@ -246,8 +246,8 @@ async def cache_dl(check=False, cached=False):
             file = msg.document.file_id
         await download2(dl, file)
         _bot.cached = True
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
         _bot.cached = False
 
 
