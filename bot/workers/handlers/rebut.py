@@ -174,7 +174,7 @@ async def en_download(event, args, client):
             )
         f_loc = _dir + loc if not link else _dir + download.file_name
         await e.edit(f"__Saved to__ `{f_loc}` __successfully!__")
-    except Exception as e:
+    except Exception:
         await logger(e)
 
 
@@ -231,7 +231,7 @@ async def getminfo(event, args, client):
         if not m_info:
             return await e.edit(f"__Generating media info for__ `{f_loc}` __failed!__")
         await e.edit(f"Mediainfo for: **[{download.file_name}]({m_info})**")
-    except Exception as e:
+    except Exception:
         await logger(e)
     finally:
         if download and downloaded:
@@ -373,7 +373,7 @@ async def en_rename(event, args, client):
         else:
             await e.edit(f"__Upload of__ `{__out}` was cancelled.__")
         s_remove(thumb3, loc)
-    except Exception as e:
+    except Exception:
         await logger(e)
     finally:
         if turn(turn_id):
@@ -667,7 +667,7 @@ async def en_mux(event, args, client):
                     await event.reply(f"'du': `{str(e)}`")
                     await logger(e)
         s_remove(t_file, loc)
-    except Exception as e:
+    except Exception:
         await logger(e)
     finally:
         if turn(turn_id):
@@ -945,6 +945,8 @@ async def en_airing(event, args, client):
             await avoid_flood(event.reply, out)
             return
         await avoid_flood(event.reply, out, file=img)
+    except ValueError as e:
+        await avoid_flood(event.reply, f"Error - `{e}`")
     except Exception as e:
         await logger(e)
         await avoid_flood(event.reply, f"Error - `{e}`")
@@ -971,6 +973,8 @@ async def en_anime(event, args, client):
         )
         img, out = await anime_arch(args, arg)
         await avoid_flood(event.reply, out, file=img)
+    except ValueError as e:
+        await avoid_flood(event.reply, f"Error - `{e}`")
     except Exception as e:
         await logger(e)
         await avoid_flood(event.reply, f"Error - `{e}`")

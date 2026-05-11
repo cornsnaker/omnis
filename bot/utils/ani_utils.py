@@ -970,7 +970,7 @@ async def anime_arch(query, arg):
     if error:
         log(e=f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n`{error}`")
         error_sts = error[0].get("message")
-        raise Exception(f"[{error_sts}]")
+        raise ValueError(f"[{error_sts}]")
 
     data = result["data"]["Media"]
     # Data of all fields in returned json
@@ -1060,7 +1060,7 @@ async def airing_anim(query):
     if error:
         log(e=f"**ANILIST RETURNED FOLLOWING ERROR:**\n\n`{error}`")
         error_sts = error[0].get("message")
-        raise Exception(f"[{error_sts}]")
+        raise ValueError(f"[{error_sts}]")
 
     data = result["data"]["Media"]
 
