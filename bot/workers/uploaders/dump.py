@@ -52,8 +52,8 @@ async def dumpdl(dl, name, thum, user, message):
     except pyro_errors.BadRequest:
         await asyncio.sleep(20)
         await dumpdl(dl, name, thum, user, message)
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
     finally:
         s_remove(dmp)
         await asyncio.sleep(5)

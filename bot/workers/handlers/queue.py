@@ -165,9 +165,9 @@ async def listqueuep(event, args, client):
             if rply:
                 rply += "\n**Queue based on auto-generated filename if you you want the actual queue use the command** /queue"
 
-        except Exception:
+        except Exception as e:
             rply = "__An error occurred.__"
-            await logger(Exception)
+            await logger(e)
         return await event.reply(rply)
 
 
@@ -356,7 +356,7 @@ async def enleech(event, args: str, client, direct=False):
             if len(queue) > 1:
                 return asyncio.create_task(listqueue(msg, None, event.client, False))
     except Exception as e:
-        await logger(Exception)
+        await logger(e)
         await rm_pause(dl_pause)
         return await event.reply(f"An error Occurred:\n - {e}")
 
@@ -631,7 +631,7 @@ async def enleech2(event, args: str, client, direct=False):
             if len(queue) > 1:
                 return asyncio.create_task(listqueue(msg, None, event.client, False))
     except Exception as e:
-        await logger(Exception)
+        await logger(e)
         await rm_pause(dl_pause)
         return await event.reply(f"An error Occurred.\n - {e}")
 
@@ -737,8 +737,8 @@ async def enselect(event, args, client):
         for reply in replies:
             await try_delete(reply)
         await try_delete(event)
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
 
 async def pencode(message, args=None, sender_id=None, flag=None):
@@ -865,8 +865,8 @@ async def addqueue(event, args, client):
             asyncio.create_task(enleech(event_2, args, client, True))
         elif check_cmds(command, "/ql", "/qbleech"):
             asyncio.create_task(enleech2(event_2, args, client, True))
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
     finally:
         await try_delete(event)
 
@@ -987,8 +987,8 @@ async def edit_batch(event, args, client):
             return await event.reply(f"Edited batch:- `{name}` successfully!")
         else:
             return await try_delete(event)
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
 
 async def edit_queue(event, args, client):
@@ -1083,4 +1083,4 @@ async def edit_queue(event, args, client):
         await event.reply("`Edited queued item successfully.`")
     except Exception as e:
         await event.reply(f"An error occurred\n  - {str(e)}")
-        await logger(Exception)
+        await logger(e)

@@ -113,8 +113,8 @@ class Downloader:
                     reply_markup=reply_markup,
                 )
                 self.lm = message
-            except Exception:
-                await logger(Exception)
+            except Exception as e:
+                await logger(e)
 
     async def start(self, dl, file, message="", e="", select=None):
         try:
@@ -168,9 +168,9 @@ class Downloader:
             dl_task = await self.start(dl, file, message, e)
             return dl_task
 
-        except Exception:
+        except Exception as e:
             self.un_register()
-            await logger(Exception)
+            await logger(e)
             return None
 
     async def start_gofile(self, dl, file, message, e):
@@ -246,9 +246,9 @@ class Downloader:
             self.un_register()
             return download
 
-        except Exception:
+        except Exception as e:
             self.un_register()
-            await logger(Exception)
+            await logger(e)
             return None
 
     async def start3(self, dl, file, message, e, s):
@@ -336,9 +336,9 @@ class Downloader:
             self.un_register()
             return download
 
-        except Exception:
+        except Exception as e:
             self.un_register()
-            await logger(Exception)
+            await logger(e)
             return None
 
     async def progress_for_pyrogram(self, current, total, app, ud_type, message, start):
@@ -410,8 +410,8 @@ class Downloader:
                     )
             except pyro_errors.FloodWait as e:
                 await asyncio.sleep(e.value)
-            except BaseException:
-                await logger(Exception)
+            except BaseException as e:
+                await logger(e)
                 # debug
 
     async def progress_for_aria2(self, download, start, message, silent=False):
@@ -536,7 +536,7 @@ class Downloader:
 
         except Exception as e:
             self.download_error = str(e)
-            await logger(Exception)
+            await logger(e)
             download = await self.clean_download()
 
         finally:
@@ -643,7 +643,7 @@ class Downloader:
 
         except Exception as e:
             self.download_error = str(e)
-            await logger(Exception)
+            await logger(e)
             download = await self.clean_download()
 
         finally:

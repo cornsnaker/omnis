@@ -91,8 +91,8 @@ async def get_preview_msg(file_list, batch_queue, ver=None, fil=None):
         button.append([btn_cancel])
         msg += f"\n**📌 Tip: To change the state of an item use** /select{cmd_s} <item number(s)>"
 
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
         msg = "__An error occurred.__"
     return msg, button
 
@@ -127,8 +127,8 @@ async def preview_actions(event):
 
         await event.answer(f"{data}…")
 
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
 
 async def batch_preview(
@@ -191,8 +191,8 @@ async def batch_preview(
         batch_queue.update({(chat_id, e_id): [torrent, pre_queue]})
         result = 1
         await save2db("batches")
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
     finally:
         preview_list.clear()
         preview_queue.clear()
