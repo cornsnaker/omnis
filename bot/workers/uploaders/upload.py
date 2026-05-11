@@ -84,9 +84,9 @@ class Uploader:
             s = await self.start(from_user_id, filepath, reply, thum, caption, message)
             return s
 
-        except Exception as e:
+        except Exception:
             decode(self.id, pop=True)
-            await logger(e)
+            await logger(Exception)
 
     async def upload_video(
         self, caption, filepath, fm, from_user_id, message, reply, thum

@@ -90,7 +90,7 @@ async def pres(e):
         ansa = ansa or "Wow such emptiness 🐱."
         await e.answer(ansa, cache_time=0, alert=True)
     except Exception as e:
-        await logger(e)
+        await logger(Exception)
         ansa = "YIKES:\n" + str(e)
         await e.answer(
             ansa,
@@ -160,8 +160,8 @@ async def stats(e):
         elif data == "2":
             ans = f"CPU: {cpuUsage}%\n\nTotal Disk Space:\n{total}\n\nDownloaded:\n{ov}\n\nEncoded:\n{ot}\n\nElapsed:\n{elapsed}\n\nBot Uptime:\n{currentTime}\n\nUsed: {used}  Free: {free}"
         await e.answer(ans, alert=True)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
         currentTime = time_formatter(time.time() - botStartTime)
         total, used, free = shutil.disk_usage(".")
         total = hbs(total)
@@ -206,8 +206,8 @@ async def dl_stat(client, query):
         ans += "\n\n"
         ans += f"Elapsed time:\n" + time_formatter(time.time() - d.time)
         await query.answer(ans, cache_time=0, show_alert=True)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
         ans = "Yikes 😬"
         await query.answer(ans, cache_time=0, show_alert=True)
 
@@ -236,8 +236,8 @@ async def download_button_callback(client, callback_query):
         await callback_query.answer(
             "Cancelling download please wait…", show_alert=False
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def v_info(client, query):
@@ -258,8 +258,8 @@ async def v_info(client, query):
             )
         await query.answer("Please wait…")
         d.display_dl_info = True
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def back(client, query):
@@ -280,8 +280,8 @@ async def back(client, query):
             )
         await query.answer("Please wait…")
         d.display_dl_info = False
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 #######! UPLOAD CALLBACK HANDLERS !#######
@@ -309,8 +309,8 @@ async def upload_button_callback(client, callback_query):
         d.is_cancelled = True
         d.canceller = callback_query.from_user.id
         await callback_query.answer("Cancelling upload please wait…", show_alert=False)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 #######! TURN CALLBACK HANDLERS !#######
@@ -327,7 +327,7 @@ async def cancel_turn_callback(client, query):
         turn().remove(turn_id)
         await query.message.delete()
     except Exception as e:
-        await logger(e)
+        await logger(Exception)
         await query.answer(f"Error: {e}", show_alert=True)
 
 

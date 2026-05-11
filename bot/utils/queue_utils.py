@@ -21,9 +21,9 @@ async def q_dup_check(event):
                     check = False
         else:
             check = True
-    except Exception as e:
+    except Exception:
         check = True
-        await logger(e)
+        await logger(Exception)
     return check
 
 
@@ -42,8 +42,8 @@ async def queue_status(event):
             return _bot.queue_status.append(str(event.chat_id) + " " + str(event.id))
         else:
             _bot.queue_status.append(str(event.chat_id) + " " + str(event.id))
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def get_queue_msg():
@@ -99,8 +99,8 @@ async def get_queue_msg():
             msg += f"**Pending Tasks:** {i - 1}\n"
         msg += f"\n**📌 Tip: To remove an item from queue use** /clear{cmd_s} <queue number>"
 
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
         msg = "__An error occurred.__"
     return msg, button
 
@@ -127,8 +127,8 @@ async def turn_page(event):
 
         await event.answer(f"{data}…")
 
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 tele.add_event_handler(

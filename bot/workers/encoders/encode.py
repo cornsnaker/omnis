@@ -76,8 +76,8 @@ class Encoder:
                     ],
                 )
 
-        except Exception as e:
-            await logger(e)
+        except Exception:
+            await logger(Exception)
 
     async def await_completion(self):
         action = "game" if conf.ALLOW_ACTION is True else "cancel"

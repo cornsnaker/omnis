@@ -72,9 +72,9 @@ async def nuke(event, args, client):
         await rst.edit("`☢️ Nuked!`")
         await clean_all_qb()
         x_or_66()
-    except Exception as e:
+    except Exception:
         await event.reply("Error Occurred")
-        await logger(e)
+        await logger(Exception)
 
 
 async def restart(event, args, client):
@@ -93,9 +93,9 @@ async def restart(event, args, client):
         except Exception:
             pass
         await re_x("restart", message)
-    except Exception as e:
+    except Exception:
         await event.reply("Error Occurred")
-        await logger(e)
+        await logger(Exception)
 
 
 async def update2(client, message):
@@ -111,8 +111,8 @@ async def update2(client, message):
         except Exception:
             pass
         await updater(reply)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def clean_all_aria2():
@@ -185,7 +185,7 @@ async def clean(event, args, client):
             pass
         return
     except Exception as e:
-        await logger(e)
+        await logger(Exception)
         await event.reply(f"```\n{str(e)}\n```")
 
 
@@ -335,8 +335,8 @@ async def set_mux_args(event, args, client):
             f"<pre>\n<code class='language-Changed mux_args to:'>{args}</code>\n</pre>",
             parse_mode="html",
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def get_mux_args(event, args, client):
@@ -403,8 +403,8 @@ async def change(event, args, client):
             f"<pre>\n<code class='language-Changed ffmpeg{s} CLI parameters to:'>{args}</code>\n</pre>",
             parse_mode="html",
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def check(event, args, client):
@@ -469,8 +469,8 @@ async def reffmpeg(event, args, client):
             f"<pre>\n<code class='Reseted ffmpeg CLI parameters to:'>{conf.FFMPEG}</code>\n</pre>",
             parse_mode="html",
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def reffmpeg2(event, args, client):
@@ -524,8 +524,8 @@ async def reffmpeg2(event, args, client):
             res,
             parse_mode="html",
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def version2(event, args, client):
@@ -694,9 +694,9 @@ async def auto_rename(event, args, client):
             f"**Check for: **`{rslt[0]}`\n"
             f"**Replace with: ** `{rslt[1]}`"
         )
-    except Exception as e:
+    except Exception:
         await event.reply("Error Occurred")
-        await logger(e)
+        await logger(Exception)
 
 
 async def v_auto_rename(event, args, client):
@@ -768,8 +768,8 @@ async def del_auto_rename(event, args, client):
             f"**Will no longer check for: **`{rslt[0]}`\n"
             f"**and replace with: ** `{rslt[1]}`"
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def filter(event, args, client):
@@ -819,9 +819,9 @@ async def filter(event, args, client):
         await event.reply("**Changed filters Successfully!**.")
         await asyncio.sleep(2)
         await vfilter(event, args, client)
-    except Exception as e:
+    except Exception:
         await event.reply("Error Occurred")
-        await logger(e)
+        await logger(Exception)
 
 
 async def vfilter(event, args, client):
@@ -840,9 +840,9 @@ async def vfilter(event, args, client):
             f"**Tag Files as:-** `{fil2}`\n"
             f"**Tag caption as:-** `{fil3}`"
         )
-    except Exception as e:
+    except Exception:
         await event.reply("An Error Occurred.")
-        await logger(e)
+        await logger(Exception)
 
 
 async def rmfilter(event, args, client):
@@ -856,8 +856,8 @@ async def rmfilter(event, args, client):
         s_remove(filter_file)
         await save2db2(None, "filter")
         await event.reply("`Filters Deleted!`")
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def save_thumb(event, args, client):
@@ -919,8 +919,8 @@ async def pause(event, args, client):
             entime.pause_indefinitely(l_msg)
         else:
             entime.new_timer(args, l_msg)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def fc_forward(msg, args, client):
@@ -942,8 +942,8 @@ async def fc_forward(msg, args, client):
         if args:
             await try_delete(msg)
             await try_delete(rep)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 async def rss_handler(event, args, client):
@@ -1083,7 +1083,7 @@ async def rss_get(event, args, client):
             imsg.edit, "Parse depth exceeded. Try again with a lower value."
         )
     except Exception as e:
-        await logger(e)
+        await logger(Exception)
         await avoid_flood(event.reply, f"error! - `{str(e)}`")
 
 
@@ -1373,7 +1373,7 @@ async def rss_sub(event, args, client):
         emsg = f"The link: {feed_link} doesn't seem to be a RSS feed or it's region-blocked!"
         await avoid_flood(event.reply, emsg + "\nError: " + str(e))
     except Exception as e:
-        await logger(e)
+        await logger(Exception)
         return await avoid_flood(event.reply, str(e))
     await save2db2(_bot.rss_dict, "rss")
     if msg:

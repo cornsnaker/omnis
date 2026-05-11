@@ -75,8 +75,8 @@ async def forward_(name, out, ds, mi, f, ani, n, pf):
         )
         if pic_id:
             await pyro.send_photo(photo=pic_id, caption=f_msg, chat_id=fc)
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
     await ds.copy(chat_id=fc)
     if not fs:
         return
@@ -107,8 +107,8 @@ async def forward_(name, out, ds, mi, f, ani, n, pf):
             fc,
             sticker=fs,
         )
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
 
 
 def skip(queue_id):
@@ -260,8 +260,8 @@ async def thing():
                 await msg_p.delete()
                 await op.delete() if op else None
                 return
-        except Exception as e:
-            await logger(e)
+        except Exception:
+            await logger(Exception)
             skip(queue_id)
             mark_file_as_done(einfo.select, queue_id)
             await save2db()
@@ -475,8 +475,8 @@ async def thing():
         s_remove(thumb2)
         s_remove(out)
 
-    except Exception as e:
-        await logger(e)
+    except Exception:
+        await logger(Exception)
         error = (
             "Due to an unknown error "
             "bot has been paused indefinitely\n"
