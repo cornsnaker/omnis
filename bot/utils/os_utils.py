@@ -47,8 +47,8 @@ async def info(file, full=False):
             )
         page = await post_to_tgph("MediaInfo", out)
         return page["url"]
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
 
 def p_dl(link, pic):
@@ -118,8 +118,8 @@ async def qclean():
             with open(ffmpeg_file, "r") as file:
                 ffmpeg = file.read().rstrip().split()[0]
             await sync_to_async(kill_process, ffmpeg)
-        except Exception:
-            await logger(Exception)
+        except Exception as e:
+            await logger(e)
     except Exception:
         pass
 
@@ -146,8 +146,8 @@ async def updater(msg=None):
             )
         else:
             os.execl(sys.executable, sys.executable, "-m", "bot")
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
 
 def read_n_to_last_line(filename, n=1):
@@ -176,8 +176,8 @@ async def get_stream_duration(file):
         )
         details = json.loads(out[1])
         result = round(float(details.get("format").get("duration")))
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
     finally:
         return result
 
@@ -198,8 +198,8 @@ async def get_video_thumbnail(file, output="thumb2.jpg", with_dur=False):
         if with_dur:
             return (output, duration)
         return output
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
 
 async def get_stream_info(file):
@@ -235,12 +235,12 @@ async def get_stream_info(file):
                     s_lang += "?|"
     except KeyError as k_e:
         if not str(k_e) == "'streams'":
-            await logger(Exception)
+            await logger(k_e)
         else:
             return None, None
             log("[NOTICE] No stream was found.")
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
     return (a_lang.strip("|"), s_lang.strip("|"))
 
 
@@ -262,8 +262,8 @@ async def pos_in_stm(file, lang1="eng", lang2="eng-us", get="both"):
             if subs == lang1 or audio == lang2:
                 s_pos = i
             i = i + 1
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
     if get.casefold() == "a" or get.casefold() == "audio":
         return a_pos
     if get.casefold() == "s" or get.casefold() == "sub":

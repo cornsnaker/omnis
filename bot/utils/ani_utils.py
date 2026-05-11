@@ -326,8 +326,8 @@ async def filter_name(name, _filter):
             fil2 = None
         if fil3.casefold() == "disable":
             fil3 = None
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
 
     return name, fil2, fil3
 
@@ -471,8 +471,8 @@ async def parse(
         if sor:
             file_name2 += f" [{sor}]"
         file_name += ".mkv"
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
         file_name = _file.replace(f"{_ext}", f" {conf.C_LINK}{_ext}")
         file_name2 = file_name
     if "/" in file_name:
@@ -519,13 +519,13 @@ async def dynamicthumb(name, thum="thumb2.jpg", anilist=True, _filter=None):
         try:
             json = await get_ani_info(s_title)
             link = json.get("coverImage")["extraLarge"]
-        except Exception:
+        except Exception as e:
             try:
                 json = await get_ani_info(title)
                 link = json.get("coverImage")["extraLarge"]
-            except Exception:
+            except Exception as e:
                 pass
-                # await logger(Exception)
+                # await logger(e)
         await sync_to_async(p_dl, link, thum)
     except Exception:
         pass
@@ -668,8 +668,8 @@ async def custcap(
             caption += f"**{ccd} Encoder:** `{encr}`\n"
         caption += f"**{ccd} CRC32:** `[{crc32s}]`\n"
         caption += f"**🔗 {conf.C_LINK}**"
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
         om = fname.split(".")[0]
         ot = om.split("@")[0]
         caption = f"**{ot}**\n**🔗 {conf.C_LINK}**"
@@ -791,8 +791,8 @@ async def simplecap(
             caption = f"**[{caption}]({mi})**"
         else:
             caption = f"`{caption}`"
-    except Exception:
-        await logger(Exception)
+    except Exception as e:
+        await logger(e)
         caption = f"`{fname}`"
     return caption
 
@@ -922,10 +922,10 @@ async def f_post(
         msg += f"**‣ Quality** : `{codec}`\n"
         msg += f"**‣ Audio(s)** : `{a_lang}`\n"
         msg += f"**‣ Subtitle(s)** : `{s_lang}`\n"
-    except Exception:
+    except Exception as e:
         pic_url = None
         msg = None
-        await logger(Exception)
+        await logger(e)
     return pic_url, msg
 
 
